@@ -5,7 +5,7 @@ from boututils.datafile import DataFile
 
 import zoidberg as zb
 
-from .common import calc_curvilinear_curvature, calc_iota, get_lines, smooth_metric
+from common import calc_curvilinear_curvature, calc_iota, get_lines, smooth_metric, dill_config # michael addition
 
 
 def rotating_ellipse(
@@ -82,6 +82,8 @@ def rotating_ellipse(
     maps = zb.make_maps(grid, field)
     zb.write_maps(grid, field, maps, str(fname), metric2d=False)
 
+    dill_config(grid, maps, field, "rotating_ellipse.dill")
+
     if curvilinear and calc_curvature:
         print("calculating curvature...")
         calc_curvilinear_curvature(fname, field, grid, maps)
@@ -103,9 +105,9 @@ def rotating_ellipse(
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--nx", "-x", help="number of x points", default=68, type=int)
-    parser.add_argument("--ny", "-y", help="number of y points", default=16, type=int)
-    parser.add_argument("--nz", "-z", help="number of z points", default=128, type=int)
+    parser.add_argument("--nx", "-x", help="number of x points", default=8, type=int) # default 68
+    parser.add_argument("--ny", "-y", help="number of y points", default=4, type=int) # default 16
+    parser.add_argument("--nz", "-z", help="number of z points", default=16, type=int) # default 128
     parser.add_argument(
         "--xcentre", "-c", help="Centre of the screw pinch", default=5.5, type=float
     )

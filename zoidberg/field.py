@@ -15,7 +15,7 @@ from sympy import (
     sqrt,
 )
 
-from . import boundary
+import boundary
 
 
 class MagneticField(object):
@@ -989,11 +989,17 @@ class VMEC(MagneticField):
             ns = int(f["ns"])
             xm_big = np.repeat(self.xm[:, np.newaxis], ns, axis=1)
             xn_big = np.repeat(self.xn[:, np.newaxis], ns, axis=1)
+            # # s and c seem to swap meanings here...
+            # rumns = -f["rmnc"].T * xm_big
+            # rvmns = -f["rmnc"].T * xn_big
+            # zumnc = f["zmns"].T * xm_big
+            # zvmnc = f["zmns"].T * xn_big
+
             # s and c seem to swap meanings here...
-            rumns = -f["rmnc"].T * xm_big
-            rvmns = -f["rmnc"].T * xn_big
-            zumnc = f["zmns"].T * xm_big
-            zvmnc = f["zmns"].T * xn_big
+            rumns = -f["rmns"].T * xm_big
+            rvmns = -f["rmns"].T * xn_big
+            zumnc = f["zmnc"].T * xm_big
+            zvmnc = f["zmnc"].T * xn_big
 
             try:
                 iasym = f["iasym"]
