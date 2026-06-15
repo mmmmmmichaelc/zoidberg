@@ -1,7 +1,6 @@
 import boututils.calculus as calc
 import numpy as np
 from boututils.datafile import DataFile
-import dill # michael 
 
 import zoidberg as zb
 
@@ -205,10 +204,3 @@ def calc_iota(field, start_r, start_z):
     peaks = argrelextrema(result[:, 0, 0], np.greater, order=10)[0]
     iota_bar = 2 * np.pi / (toroidal_angle[peaks[1]] - toroidal_angle[peaks[0]])
     return iota_bar
-
-def dill_config(grid, map, magnetic_field, filename):
-    # michael addition
-
-    with open(f"{filename}.dill", 'wb') as f:
-        dill.dump((grid, map, magnetic_field), f)
-
