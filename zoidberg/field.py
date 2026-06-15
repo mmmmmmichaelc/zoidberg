@@ -15,7 +15,7 @@ from sympy import (
     sqrt,
 )
 
-import boundary
+from . import boundary
 
 
 class MagneticField(object):
