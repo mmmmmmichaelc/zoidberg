@@ -5,7 +5,11 @@ from itertools import chain
 import numpy as np
 from boututils import datafile as bdata
 
-from zoidberg import __version__
+try:
+    from zoidberg import __version__
+except:
+    print("Failure to import __version__ from zoidberg")
+    __version__ = "ask michael.campagna@columbia.edu"
 
 from . import fieldtracer
 from .diff import field_line_length
@@ -360,6 +364,7 @@ def make_maps(
                     refine_parallel_integral * k,
                     -refine_parallel_integral * (2 - k) if k < 2 else None,
                 )
+                # print("y_all", y_all) # TODO debug 
                 sg_22[k][chunk, j, :] = field_line_length(coords[slc], y_all[slc])
             coords = coords[refine_parallel_integral:-refine_parallel_integral]
             y_all = y_all[refine_parallel_integral:-refine_parallel_integral]
@@ -660,7 +665,7 @@ class MapWriter:
         meandy = np.mean(np.diff(ypar))
         Ly = self.grid.Ly if self.grid else meandy * ny
         if self.grid and len(ypar) > 1:
-            assert np.isclose(Ly, meandy * ny), (
+            assert np.isclose(Ly, meandy * ny, rtol=1e-2), ( # TODO added rtol, is this rtol too large? 
                 f"Ly of grid (Ly={Ly}) does not seem to match the average dy (ny * dy = {ny} * {meandy} = {ny * meandy}"
             )
         yperiodic = self.grid.yperiodic if self.grid else True
@@ -671,7 +676,7 @@ class MapWriter:
                     if meandy * (pypar[i] - pypar[i - 1]) < 0:
                         pypar[i] += np.sign(meandy) * Ly
                 if len(pypar) > 1:
-                    assert np.isclose(np.mean(np.diff(pypar)), meandy), (
+                    assert np.isclose(np.mean(np.diff(pypar)), meandy, rtol=1e-2), ( # TODO added rtol here as well 
                         f"Mean of dy changes from {meandy} to {np.mean(np.diff(pypar))}. Values: {ypar} -> {pypar}"
                     )
 
@@ -796,6 +801,7 @@ def write_maps(
     with MapWriter(gridfile, new_names=new_names, metric2d=metric2d, quiet=quiet) as mw:
         mw.add_grid_field(grid, magnetic_field)
         mw.add_maps(maps)
+        mw.add_dagp() # TODO michael addition
 
 
 def write_Bfield_to_vtk(

@@ -100,8 +100,9 @@ class FieldTracer(object):
             position = np.column_stack((x_values, z_values)).flatten()
 
             result = odeint(
-                self.field_direction, position, y_values, args=(True,), rtol=rtol
+                self.field_direction, position, y_values, args=(True,), rtol=rtol,
             )
+
         else:
             # Split into smaller pieces
 
@@ -318,7 +319,7 @@ class FieldTracerReversible(object):
 
 
 def trace_poincare(
-    magnetic_field, xpos, zpos, yperiod, nplot=3, y_slices=None, revs=20, nover=20
+    magnetic_field, xpos, zpos, yperiod, nplot=3, y_slices=None, revs=20, nover=20, reshape=True
 ):
     """Trace a Poincare graph of the field lines
 
@@ -401,7 +402,8 @@ def trace_poincare(
     result = result[::nover, ...]  # Remove unneeded points
 
     # Reshape data. Loops fastest over planes (nplot)
-    result = np.reshape(result, (revs, nplot) + result.shape[1:])
+    if reshape:
+        result = np.reshape(result, (revs, nplot) + result.shape[1:])
 
     return result, y_slices
 

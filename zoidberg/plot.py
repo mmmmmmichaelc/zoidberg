@@ -237,8 +237,8 @@ def plot_streamlines(grid, magnetic_field, y_slice=0, width=None, **kwargs):
         linewidth = 1
 
     ax.streamplot(
-        grid.xarray,
-        grid.zarray,
+        # grid.xarray,  # TODO michael removed
+        # grid.zarray,
         magnetic_field.bx[full_slice].T,
         magnetic_field.bz[full_slice].T,
         linewidth=linewidth,

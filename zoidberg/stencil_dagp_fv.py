@@ -75,7 +75,7 @@ def getSame(lst):
     return val
 
 
-def doit(pols, plot=False, isSlab=False):
+def lsdoit(pols, plot=False, isSlab=False):
     RZs = []
 
     Lz = (
