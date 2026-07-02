@@ -1,7 +1,17 @@
 import numpy as np
+import warnings
 
 # Import classes representing poloidal grids
 from .poloidal_grid import RectangularPoloidalGrid
+
+try:
+    import matplotlib.pyplot as plt
+
+    plotting_available = True
+except ImportError:
+    warnings.warn("Couldn't import matplotlib, plotting not available.")
+    plotting_available = False
+
 
 
 class Grid(object):
@@ -235,6 +245,62 @@ class Grid(object):
         if has_J > 0:
             self._metric_cache["J"] = J
         return self._metric_cache
+    
+    def plot3D(self, axis=None, show=True):
+        """
+        Plot grid in 3D using matplotlib
+        """
+
+        if not plotting_available:
+            warnings.warn("matplotlib not available, unable to plot")
+            return None
+
+        if axis is None:
+            fig = plt.figure()
+            ax = fig.add_subplot(1, 1, 1, projection="3d")
+
+        else:
+            axis = ax
+
+        ax.xaxis.pane.fill = False
+        ax.yaxis.pane.fill = False
+        ax.zaxis.pane.fill = False
+        ax.grid(False)
+        ax.xaxis.line.set_lw(0)
+        ax.yaxis.line.set_lw(0)
+        ax.zaxis.line.set_lw(0)
+        ax.xaxis.pane.set_edgecolor((1.0, 1.0, 1.0, 0.0)) 
+        ax.yaxis.pane.set_edgecolor((1.0, 1.0, 1.0, 0.0))
+        ax.zaxis.pane.set_edgecolor((1.0, 1.0, 1.0, 0.0))
+        # ax.view_init(elev=12.5, azim=75)
+        ax.set_axis_off()
+        # ax.set_aspect('equal')
+
+        poloidal_grids = []
+        for i in range(len(self.ycoords)):
+            poloidal_grid, yval = self.getPoloidalGrid(i)
+            poloidal_grids.append(poloidal_grid)
+
+        # print(poloidal_grids[0].R.shape)
+        # print(poloidal_grids[0].Z.shape)
+        # print(self.ycoords.shape)
+
+        for i in range(len(self.ycoords)):
+            phi = self.ycoords[i]
+            x = poloidal_grids[i].R*np.cos(phi)
+            y = poloidal_grids[i].R*np.sin(phi)
+            z = poloidal_grids[i].Z
+            ax.plot_wireframe(x, y, z, color='black')
+
+            # #TODO hardcoded symmetry
+            # axis.plot_wireframe(-x, -y, z, color='black')
+
+
+        if show:
+            plt.show()
+
+        return ax
+
 
 
 def rectangular_grid(

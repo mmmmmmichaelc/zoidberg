@@ -11,6 +11,8 @@ from numpy import append, argmin, cos, linspace, pi, sin, sqrt
 from scipy.integrate import cumulative_trapezoid as cumtrapz
 from scipy.interpolate import interp1d, splev, splrep
 
+from tqdm import tqdm
+
 try:
     import matplotlib.pyplot as plt
 
@@ -616,6 +618,7 @@ def line_from_points(
     best_dist = 0.0  # Distance around best line
 
     for start_ind in range(rarray.size):
+    # michael added tqdm
         # Create an array of remaining points
         # Make copies since we edit the array later
         rarr = np.roll(rarray, start_ind).copy()
@@ -654,13 +657,16 @@ def line_from_points(
             best_line = new_line
             best_dist = new_dist
 
+    if show:
+        best_line.plot()
+
     return best_line
 
 
 if __name__ == "__main__":
-    import field
-    import fieldtracer
-    import poloidal_grid
+    import zoidberg.field as field
+    import zoidberg.fieldtracer as fieldtracer
+    import zoidberg.poloidal_grid as poloidal_grid
 
     #############################################################################
     # Define the magnetic field
@@ -691,10 +697,12 @@ if __name__ == "__main__":
 
     coord = tracer.follow_field_lines(start_r, start_z, ycoords_all, rtol=1e-12)
 
+    print(coord.shape)
+
     inner_lines = []
     for i in range(nslices):
-        r = coord[i::nslices, 0]
-        z = coord[i::nslices, 1]
+        r = coord[i::nslices, 0, 0]
+        z = coord[i::nslices, 0, 1]
         line = line_from_points(r, z)
         # Re-map the points so they're approximately uniform in distance along the surface
         # Note that this results in some motion of the line
@@ -706,7 +714,7 @@ if __name__ == "__main__":
     #############################################################################
     # Generate a fixed circle for the outer boundary
 
-    outer_line = circle(R0=0.0, r=0.8)
+    outer_line = circle(R0=0.0, r=0.6)
 
     #############################################################################
     # Now have inner and outer boundaries for each poloidal slice

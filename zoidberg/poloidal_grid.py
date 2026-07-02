@@ -86,6 +86,7 @@ class PoloidalGrid(object):
             plt.show()
 
         return axis
+    
 
 
 class RectangularPoloidalGrid(PoloidalGrid):
@@ -1018,6 +1019,7 @@ def grid_elliptic(
                 # Red dots to mark the inner and outer boundaries
                 plt.plot(R[0, :], Z[0, :], "ro")
                 plt.plot(R[-1, :], Z[-1, :], "ro")
+            plt.legend() # michael added
             plt.show()
 
         raise RuntimeError(
