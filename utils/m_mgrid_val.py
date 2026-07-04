@@ -5,13 +5,35 @@ equilibria
 """
 
 import numpy as np
-from zoidberg.field import VMEC, MGRID
+from zoidberg.field import MGRID
 import matplotlib.pyplot as plt
 from zoidberg.plot import plot_poincare, plot_3d_field_line, plot_streamlines
 import matplotlib.pyplot as plt
 from zoidberg.grid import Grid, rectangular_grid
 import dill
 from tqdm import tqdm
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--nx', type=int, default=64,
+    help="Grid resolution in the x (radial) direction. Default: 64")
+parser.add_argument('--ny', type=int, default=64,
+    help="Grid resolution in the y (toroidal) direction. Default: 64")
+parser.add_argument('--nz', type=int, default=64,
+    help="Grid resolution in the z (poloidal) direction. Default: 64")
+parser.add_argument('--vmgrid', type=str, required=True,
+    help="Stellopt .mgrid file specifying the vacuum magnetic field")
+parser.add_argument('--pmgrid', type=str, required=True,
+    help="Stellopt .mgrid file specifying the finite beta magnetic field.\n" \
+    "That is, the vmgrid and pmgrid fields should add to the actual field.")
+parser.add_argument('--start_R', type=float, required=True,
+    help="Location in R (cylindrical coordinates) to begin field line tracing\n" \
+    "to determine the geometry of the inner boundary. Tracing begins at y=0.")
+parser.add_argument('--start_Z', type=float, required=True,
+    help="Location in Z (cylindrical coordinates) to begin field line tracing\n" \
+    "to determine the geometry of the inner boundary. Tracing begins at y=0.")
+
+
 
 # first, getting vmec to work
 
@@ -35,8 +57,8 @@ import desc
 # plt.show()
 
 
-vacuum_mgrid = "equilibria/mgrid_G1600-12-89_QA2e-1_Bxdl25-128x128x128_vecpot.nc"
-plasma_mgrid = "equilibria/bmw_G1600-12-89-QA2e-1_Bxdl25_128x128x128.nc"
+vacuum_mgrid = "../equilibria/mgrid_G1600-12-89_QA2e-1_Bxdl25-128x128x128_vecpot.nc"
+plasma_mgrid = "../equilibria/bmw_G1600-12-89-QA2e-1_Bxdl25_128x128x128.nc"
 
 mgrid = MGRID(vacuum_mgrid, plasma_mgrid)
 

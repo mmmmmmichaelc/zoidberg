@@ -305,7 +305,7 @@ class RZline:
 
         return np.remainder(theta0, 2 * np.pi)
 
-    def plot(self, axis=None, show=True):
+    def plot(self, axis=None, show=True, savename=None):
         """Plot the RZline, either on the given axis or a new figure
 
         Parameters
@@ -337,6 +337,9 @@ class RZline:
 
         if show:
             plt.show()
+
+        if savename is not None:
+            fig.savefig(savename)
 
         return axis
 

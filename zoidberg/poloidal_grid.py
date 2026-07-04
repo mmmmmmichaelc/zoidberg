@@ -434,7 +434,7 @@ switch inner and outer boundary.
                 underrelax = 2.5
             if cnt == 700:
                 underrelax = 3
-            if cnt == 1000:
+            if cnt == 10000:
                 raise RuntimeError("Failed to converge")
 
             # Calculate derivatives
@@ -935,7 +935,7 @@ def grid_elliptic(
         plt.plot(R[-1, :], Z[-1, :], "ro")
 
     # Start solver loop
-    maxit = max(max(R.shape) * 10, 300)
+    maxit = max(max(R.shape) * 100, 300)
     for _ in range(maxit):
         # Calculate coefficients, which exclude boundary points
         # Note that the domain is periodic in y so roll arrays
