@@ -7,6 +7,7 @@ more information about the necessary inputs.
 
 import numpy as np
 import matplotlib.pyplot as plt
+import netCDF4 as nc
 import dill
 import argparse
 import os
@@ -129,3 +130,25 @@ print("Writing maps...")
 write_maps(grid, magnetic_field, maps, file_dir + args.gridname, metric2d=False)
 
 print(f"Done writing {file_dir + args.gridname}.")
+
+print("Making a Jacobian free copy...")
+src = nc.Dataset(f"{file_dir + args.gridname}", "r")
+dst = nc.Dataset(f"{(file_dir + args.gridname).replace(".nc", "_noJ.nc")}", "w", format=src.file_format)
+
+for name, dim in src.dimensions.items():
+    dst.createDimension(name, (len(dim) if not dim.isunlimited() else None))
+
+for name, var in src.variables.items():
+    if name == "J":
+        continue
+    out_var = dst.createVariable(name, var.datatype, var.dimensions)
+    out_var.setncatts({k: var.getncattr(k) for k in var.ncattrs()})
+    out_var[:] = var[:]
+
+dst.setncatts({k: src.getncattr(k) for k in src.ncattrs()})
+
+src.close()
+dst.close()
+print(f"Done writing {(file_dir + args.gridname).replace(".nc", "_noJ.nc")}")
+print("The '_noJ' version is the one compatible with BSTING.")
+
