@@ -2031,9 +2031,18 @@ class MGRID(MagneticField):
         pzmin = pmgrid.variables["zmin"][0]
         pzmax = pmgrid.variables["zmax"][0]
 
-        self.max_phi = 2*np.pi
+        try:
+            vnfp = vmgrid.variables["nfp"][0]
+            pnfp = pmgrid.variables["nfp"][0]
 
-        # TODO hardcoded, how to deal will stellarator symmetry?
+            assert vnfp == pnfp, "mgrids disagree on the number of field periods"
+            self.max_phi = 2*np.pi / vnfp
+        except:
+            print("Could not read the number of field periods from the mgrid files.")
+            print("Assuming nfp = 1 instead.")
+            self.max_phi = 2*np.pi
+
+        # TODO hardcoded, how to deal will stellarator symmetry / different numbers of field periods?
 
         vphi = np.linspace(0, self.max_phi, vnum_phi)
         vzee = np.linspace(vzmin, vzmax, vnum_zee)
@@ -2042,7 +2051,7 @@ class MGRID(MagneticField):
         pphi = np.linspace(0, self.max_phi, pnum_phi)
         pzee = np.linspace(pzmin, pzmax, pnum_zee)
         prad = np.linspace(prmin, prmax, pnum_rad)
-        # TODO assumes uniform grid, is this true
+        # TODO assumes uniform grid, is this true ?
 
         vbp = vmgrid.variables["bp_001"][...]
         vbr = vmgrid.variables["br_001"][...]

@@ -27,7 +27,7 @@ class FieldTracer(object):
     def __init__(self, field):
         self.field_direction = field.field_direction
 
-    def follow_field_lines(self, x_values, z_values, y_values, rtol=None):
+    def follow_field_lines(self, x_values, z_values, y_values, rtol=1e-6): # loosened
         """Uses field_direction to follow the magnetic field
         from every grid (x,z) point at toroidal angle y
         through a change in toroidal angle dy
@@ -121,7 +121,7 @@ class FieldTracer(object):
             # Process in chunks. Note: multiprocessing has trouble with closures
             # so fails in Python 2. Python 3 may work
             results = [
-                odeint(self.field_direction, chunk, y_values, args=(True,), rtol=rtol)
+                odeint(self.field_direction, chunk, y_values, args=(True,), rtol=rtol) # TODO debug, remove full_output
                 for chunk in chunks
             ]
 

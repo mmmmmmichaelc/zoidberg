@@ -93,8 +93,11 @@ class RZline:
                 smooth = 100
             num = len(r) // smooth + 1
             kw["t"] = np.linspace(0, np.pi * 2, num, endpoint=False) + np.pi / num
-        self._rspl = splrep(append(self.theta, 2 * pi), append(r, r[0]), **kw)
-        self._zspl = splrep(append(self.theta, 2 * pi), append(z, z[0]), **kw)
+        weights_r = np.ones_like(append(r, r[0]))
+        weights_z = np.ones_like(append(z, z[0]))
+        form_factor = (np.max(r) - np.min(r))**2
+        self._rspl = splrep(append(self.theta, 2 * pi), append(r, r[0]), w=weights_r, s=0.00242*form_factor)
+        self._zspl = splrep(append(self.theta, 2 * pi), append(z, z[0]), w=weights_z, s=0.00242*form_factor)
 
     def Rvalue(self, theta=None, deriv=0):
         """Calculate the value of R at given theta locations

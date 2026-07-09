@@ -260,7 +260,7 @@ class Grid(object):
             ax = fig.add_subplot(1, 1, 1, projection="3d")
 
         else:
-            axis = ax
+            ax = axis
 
         ax.xaxis.pane.fill = False
         ax.yaxis.pane.fill = False
@@ -290,7 +290,7 @@ class Grid(object):
             x = poloidal_grids[i].R*np.cos(phi)
             y = poloidal_grids[i].R*np.sin(phi)
             z = poloidal_grids[i].Z
-            ax.plot_wireframe(x, y, z, color='black')
+            ax.plot_wireframe(x, y, z, color='black', linewidths=0.5)
 
             # #TODO hardcoded symmetry
             # axis.plot_wireframe(-x, -y, z, color='black')
